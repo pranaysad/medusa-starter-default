@@ -73,7 +73,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   const existingUsers = await userModule.listUsers({ email: "admin@test.com" })
   if (!existingUsers.length) {
-    const { authIdentity } = await authModule.createAuthIdentities({
+    const authIdentity = await authModule.createAuthIdentities({
       provider_identities: [{
         provider: "emailpass",
         entity_id: "admin@test.com",
