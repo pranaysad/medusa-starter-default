@@ -56,6 +56,8 @@ const updateStoreCurrencies = createWorkflow(
 );
 
 export default async function seedDemoData({ container }: ExecArgs) {
+  
+    
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const link = container.resolve(ContainerRegistrationKeys.LINK);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
@@ -65,6 +67,33 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   const countries = ["gb", "de", "dk", "se", "fr", "es", "it"];
 
+  // Create admin user
+  const authModule = container.resolve(Modules.AUTH)
+  const userModule = container.resolve(Modules.USER)
+
+  const existingUsers = await userModule.listUsers({ email: "admin@test.com" })
+  if (!existingUsers.length) {
+    const { authIdentity } = await authModule.createAuthIdentities({
+      provider_identities: [{
+        provider: "emailpass",
+        entity_id: "admin@test.com",
+        provider_metadata: { password: "Charkop10293" }
+      }]
+    })
+    const user = await userModule.createUsers({
+      email: "admin@test.com",
+      first_name: "Admin",
+      last_name: "User",
+    })
+    await authModule.updateAuthIdentities({
+      id: authIdentity.id,
+      app_metadata: { user_id: user.id }
+    })
+    logger.info("Admin user created!")
+  }
+  
+
+  
   logger.info("Seeding store data...");
   const [store] = await storeModuleService.listStores();
   let defaultSalesChannel = await salesChannelModuleService.listSalesChannels({
