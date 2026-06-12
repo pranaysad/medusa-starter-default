@@ -77,7 +77,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       provider_identities: [{
         provider: "emailpass",
         entity_id: "admin@test.com",
-        provider_metadata: { password: "Charkop10293" }
+        provider_metadata: { password: "Password10293" }
       }]
     })
     const user = await userModule.createUsers({
